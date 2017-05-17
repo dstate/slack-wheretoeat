@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post('/eatnow', (req, res) => {
   console.log(req.body);
-  res.json({'success' => 'true'});
+  res.json({success: 'true'});
 });
 
 app.listen(config.port, config.host, (err) => {
