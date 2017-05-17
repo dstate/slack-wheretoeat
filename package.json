@@ -1,0 +1,26 @@
+{
+  "name": "slack-wheretoeat",
+  "version": "0.1.0",
+  "description": "Slack app to decide for a place to eat in the area",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dstate/slack-wheretoeat.git"
+  },
+  "keywords": [
+    "slack",
+    "restaurant"
+  ],
+  "author": "dstate",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dstate/slack-wheretoeat/issues"
+  },
+  "homepage": "https://github.com/dstate/slack-wheretoeat#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
