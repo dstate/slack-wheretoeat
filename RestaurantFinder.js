@@ -8,13 +8,13 @@ module.exports = class RestaurantFinder {
     constructor() {
     }
 
-    search(location, callback, pagetoken = null) {
+    search(location, retrieveImages, callback, pagetoken = null) {
         let params = {
             location: location,
             radius: 300,
             type: 'restaurant',
             opennow: true,
-            key: config.apis.place.key
+            key: config.secret.place.key
         };
         if (pagetoken) {
             params.pagetoken = pagetoken;
@@ -54,25 +54,33 @@ module.exports = class RestaurantFinder {
                     json.results.forEach((result, index) => {
                         const imageLocation = result.geometry.location.lat + ',' + result.geometry.location.lng;
 
-                        this.retrieveImage(imageLocation, (image, errorMsg) => {
-                            errorMsg && console.log('Error: ' + errorMsg);
-                            image = (image ? image.toString('base64') : image);
+                        const resFct = (image) => {
+                          res.push({
+                            name: result.name,
+                            image: image
+                          });
 
-                            res.push({
-                                name: result.name,
-                                image: image,
-                            });
-
-                            if (index === json.results.length - 1) { // last result
-                                if (json.next_page_token) {
-                                    this.search(location, (nextRes) => {
-                                        callback([...res, ...nextRes]);
-                                    }, json.next_page_token);
-                                } else {
-                                    callback(res);
-                                }
+                          if (index === json.results.length - 1) { // last result
+                            if (json.next_page_token) {
+                              this.search(location, (nextRes) => {
+                                  callback([...res, ...nextRes]);
+                              }, json.next_page_token);
+                            } else {
+                              callback(res);
                             }
-                        });
+                          }
+                        };
+
+                        if (retrieveImages) {
+                          this.retrieveImage(imageLocation, (image, errorMsg) => {
+                              errorMsg && console.log('Error: ' + errorMsg);
+                              image = (image ? image.toString('base64') : image);
+
+                              resFct(image)
+                          });
+                        } else {
+                          resFct(null);
+                        }
                     });
                 });
             });
@@ -83,7 +91,7 @@ module.exports = class RestaurantFinder {
         let params = {
             size: '200x200',
             location: location,
-            key: config.apis.streetview.key
+            key: config.secret.streetview.key
         };
 
         const url = config.apis.streetview.baseUrl + '?' + querystring.stringify(params);
