@@ -11,6 +11,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post('/eatnow', (req, res) => {
   console.log(req.body);
+
+  const finder = new RestaurantFinder();
+  finder.search('48.844749,2.383247', false, (items, err) => {
+  });
+
   res.json({success: 'true'});
 });
 

@@ -14,7 +14,7 @@ module.exports = class RestaurantFinder {
             radius: 300,
             type: 'restaurant',
             opennow: true,
-            key: config.secret.place.key
+            key: config.apis.place.token
         };
         if (pagetoken) {
             params.pagetoken = pagetoken;
@@ -62,7 +62,7 @@ module.exports = class RestaurantFinder {
 
                           if (index === json.results.length - 1) { // last result
                             if (json.next_page_token) {
-                              this.search(location, (nextRes) => {
+                              this.search(location, retrieveImages, (nextRes) => {
                                   callback([...res, ...nextRes]);
                               }, json.next_page_token);
                             } else {
@@ -84,14 +84,14 @@ module.exports = class RestaurantFinder {
                     });
                 });
             });
-        }, 1000);
+        }, 2000);
     }
 
     retrieveImage(location, callback) {
         let params = {
             size: '200x200',
             location: location,
-            key: config.secret.streetview.key
+            key: config.apis.streetview.token
         };
 
         const url = config.apis.streetview.baseUrl + '?' + querystring.stringify(params);
