@@ -5,6 +5,7 @@ const
 module.exports = {
   host: 'localhost',
   port: 1338,
+  frontUrl: 'http://wheretoeat.pichot.fr',
   apis: {
     slack: {
       verificationToken: secret.slack.verificationToken

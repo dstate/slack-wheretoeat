@@ -1,6 +1,7 @@
 const
     https = require('https'),
     querystring = require('querystring'),
+    fs = require('fs'),
     config = require('./config')
 ;
 
@@ -57,7 +58,9 @@ module.exports = class RestaurantFinder {
                         const resFct = (image) => {
                           res.push({
                             name: result.name,
-                            image: image
+                            image: image,
+                            location: imageLocation,
+                            address: result.vicinity
                           });
 
                           if (index === json.results.length - 1) { // last result
@@ -104,7 +107,22 @@ module.exports = class RestaurantFinder {
             let buf = Buffer.alloc(0);
             httpsRes.on('data', (chunk) => buf = Buffer.concat([buf, Buffer.from(chunk)]));
             httpsRes.on('end', () => {
-                callback(buf);
+                const filename = 'images/' + location.replace(/\./g, '-').replace(/,/g, '_') + '.jpg';
+                const fileUrl = config.frontUrl + '/' + filename;
+                if (fs.existsSync(filename)) {
+                  console.log('Image file already exists');
+                  callback(fileUrl);
+                  return;
+                }
+
+                fs.writeFile(filename, buf.toString('base64'), 'base64', (err) => {
+                  if (err) {
+                    console.log(err);
+                    callback(null);
+                  } else {
+                    callback(fileUrl);
+                  }
+                });
             });
         });
     }
